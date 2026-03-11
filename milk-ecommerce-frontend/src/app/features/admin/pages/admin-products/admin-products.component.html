@@ -1,0 +1,148 @@
+<section class="max-w-7xl mx-auto px-4 py-10">
+  <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+    <div class="xl:col-span-3">
+      <app-admin-sidebar></app-admin-sidebar>
+    </div>
+
+    <div class="xl:col-span-9">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+        <div>
+          <h2 class="text-3xl font-bold">Admin Products</h2>
+          <p class="text-gray-600 mt-1">View and manage all marketplace products.</p>
+        </div>
+
+        <button
+          type="button"
+          class="px-4 py-2 rounded-2xl border hover:bg-gray-50 disabled:opacity-50"
+          (click)="load()"
+          [disabled]="loading || saving"
+        >
+          Refresh
+        </button>
+      </div>
+
+      <div class="mt-6 grid md:grid-cols-2 xl:grid-cols-3 gap-3">
+        <input
+          [(ngModel)]="q"
+          (input)="applyFilters()"
+          type="text"
+          placeholder="Search by product, seller, email, category..."
+          class="w-full px-4 py-3 rounded-2xl border focus:outline-none"
+        />
+
+        <select
+          [(ngModel)]="statusFilter"
+          (change)="applyFilters()"
+          class="w-full px-4 py-3 rounded-2xl border bg-white focus:outline-none"
+        >
+          <option value="ALL">All Status</option>
+          <option value="ACTIVE">ACTIVE</option>
+          <option value="INACTIVE">INACTIVE</option>
+        </select>
+      </div>
+
+      <div *ngIf="err" class="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+        {{ err }}
+      </div>
+
+      <div *ngIf="success" class="mt-6 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">
+        {{ success }}
+      </div>
+
+      <div *ngIf="loading" class="py-12 text-center text-gray-600">Loading products...</div>
+
+      <div *ngIf="!loading && !err && filtered.length === 0" class="mt-6 rounded-2xl border bg-white p-6 text-gray-600">
+        No products found.
+      </div>
+
+      <div *ngIf="!loading && !err && filtered.length > 0" class="mt-6 grid gap-4">
+        <div *ngFor="let p of filtered" class="rounded-3xl border bg-white p-5">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+              <div class="font-semibold text-lg">{{ p?.name }}</div>
+              <div class="text-sm text-gray-600 mt-1">{{ p?.description || '-' }}</div>
+              <div class="text-sm text-gray-600 mt-1">
+                Seller:
+                <b>{{ p?.sellerShopName || p?.sellerUserName || '-' }}</b>
+                <span *ngIf="p?.sellerUserEmail">({{ p?.sellerUserEmail }})</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="px-3 py-1 rounded-full border text-sm" [ngClass]="badgeClass(p?.status)">
+                {{ p?.status }}
+              </span>
+
+              <button
+                type="button"
+                class="px-4 py-2 rounded-2xl bg-black text-white hover:opacity-90"
+                (click)="open(p)"
+              >
+                Change Status
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-4 grid sm:grid-cols-3 gap-3">
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Price</div>
+              <div class="font-bold">₹ {{ money(p?.price) }}</div>
+            </div>
+
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Stock</div>
+              <div class="font-semibold" [ngClass]="stockClass(p?.stock)">
+                {{ p?.stock }}
+                <span *ngIf="(p?.stock ?? 0) <= 5" class="text-xs ml-2">(Low)</span>
+              </div>
+            </div>
+
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Category</div>
+              <div class="font-semibold">{{ p?.categoryName || '-' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="selected" class="fixed inset-0 z-50">
+        <div class="absolute inset-0 bg-black/50" (click)="close()"></div>
+
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+          <div class="w-full max-w-lg rounded-3xl border bg-white shadow-xl overflow-hidden">
+            <div class="px-6 py-4 border-b flex items-center justify-between">
+              <div class="font-semibold text-lg">Update Product Status</div>
+              <button class="px-3 py-2 rounded-2xl border hover:bg-gray-50" (click)="close()" [disabled]="saving">✕</button>
+            </div>
+
+            <div class="p-6">
+              <div class="font-semibold text-lg">{{ selected?.name }}</div>
+              <div class="text-sm text-gray-600 mt-1">{{ selected?.description || '-' }}</div>
+
+              <div class="mt-5 text-sm font-semibold text-gray-700">New Status</div>
+              <select
+                class="mt-2 w-full px-4 py-3 rounded-2xl border"
+                [(ngModel)]="newStatus"
+                [disabled]="saving"
+              >
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="INACTIVE">INACTIVE</option>
+              </select>
+
+              <div class="mt-6 flex justify-end gap-2">
+                <button class="px-5 py-3 rounded-2xl border hover:bg-gray-50" (click)="close()" [disabled]="saving">
+                  Cancel
+                </button>
+
+                <button class="px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90 disabled:opacity-50" (click)="saveStatus()" [disabled]="saving">
+                  {{ saving ? 'Saving...' : 'Save' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

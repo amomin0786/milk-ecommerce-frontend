@@ -1,0 +1,35 @@
+<aside class="rounded-3xl border bg-white p-5 shadow-sm">
+
+  <div class="mb-6">
+    <div class="text-xl font-bold">
+      Seller Panel
+    </div>
+
+    <div class="text-sm text-gray-500">
+      Milk E-Commerce
+    </div>
+  </div>
+
+  <nav class="flex flex-col gap-2">
+
+    <a
+      *ngFor="let item of menu"
+      [routerLink]="item.route"
+      routerLinkActive="bg-black text-white border-black"
+      [routerLinkActiveOptions]="{ exact: item.route === '/seller/dashboard' }"
+      class="flex items-center justify-between rounded-2xl border px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+    >
+      <div class="flex items-center gap-3">
+        <span class="text-lg">
+          {{ item.icon }}
+        </span>
+
+        <span>
+          {{ item.label }}
+        </span>
+      </div>
+    </a>
+
+  </nav>
+
+</aside>

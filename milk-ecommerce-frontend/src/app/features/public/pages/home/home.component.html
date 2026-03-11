@@ -1,0 +1,420 @@
+<!-- HERO -->
+<section id="home" class="bg-gradient-to-b from-gray-50 to-white">
+  <div class="max-w-7xl mx-auto px-4 py-12">
+    <div class="grid lg:grid-cols-2 gap-10 items-center">
+      <!-- Left -->
+      <div>
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border bg-white text-sm text-gray-700">
+          Fresh Dairy Marketplace
+        </div>
+
+        <h1 class="mt-5 text-4xl md:text-5xl xl:text-6xl font-bold leading-tight">
+          Fresh Dairy Delivered
+          <span class="text-gray-500">Every Day.</span>
+        </h1>
+
+        <p class="mt-4 text-lg text-gray-600 max-w-2xl">
+          Milk, Ghee, Paneer, Butter, Cheese and Curd — trusted sellers, quality dairy products,
+          smooth ordering and fast delivery in one secure marketplace.
+        </p>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a
+            routerLink="/shop/products"
+            class="px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90"
+          >
+            Shop Products
+          </a>
+
+          <a
+            [routerLink]="['/']"
+            fragment="gallery"
+            class="px-5 py-3 rounded-2xl border hover:bg-gray-50"
+          >
+            View Gallery
+          </a>
+
+          <a
+            *ngIf="auth.isLoggedIn()"
+            routerLink="/seller/apply"
+            class="px-5 py-3 rounded-2xl border hover:bg-gray-50"
+          >
+            Become Seller
+          </a>
+        </div>
+
+        <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="p-4 rounded-2xl border bg-white shadow-sm">
+            <div class="text-2xl font-semibold">100%</div>
+            <div class="text-sm text-gray-600">Fresh Quality</div>
+          </div>
+
+          <div class="p-4 rounded-2xl border bg-white shadow-sm">
+            <div class="text-2xl font-semibold">Fast</div>
+            <div class="text-sm text-gray-600">Delivery</div>
+          </div>
+
+          <div class="p-4 rounded-2xl border bg-white shadow-sm">
+            <div class="text-2xl font-semibold">Secure</div>
+            <div class="text-sm text-gray-600">Payments</div>
+          </div>
+
+          <div class="p-4 rounded-2xl border bg-white shadow-sm">
+            <div class="text-2xl font-semibold">24/7</div>
+            <div class="text-sm text-gray-600">Support</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Images -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="col-span-2 rounded-3xl overflow-hidden border shadow-sm bg-white">
+          <img
+            src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=1200&q=80"
+            alt="Fresh milk"
+            class="w-full h-[320px] object-cover"
+          />
+        </div>
+
+        <div class="rounded-3xl overflow-hidden border shadow-sm bg-white">
+          <img
+            src="https://img.freepik.com/free-photo/tofu-made-from-soybeans-food-nutrition-concept_1150-26360.jpg?ga=GA1.1.2114206420.1767018846&semt=ais_hybrid&w=740&q=80"
+            alt="Paneer"
+            class="w-full h-52 object-cover"
+          />
+        </div>
+
+        <div class="rounded-3xl overflow-hidden border shadow-sm bg-white">
+          <img
+            src="https://img.freepik.com/premium-photo/fresh-butter-cut-with-knife-wooden-plate-bread_42687-426.jpg?ga=GA1.1.2114206420.1767018846&semt=ais_hybrid&w=740&q=80"
+            alt="Butter"
+            class="w-full h-52 object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery" class="bg-white border-t scroll-mt-24">
+  <div class="max-w-7xl mx-auto px-4 py-14">
+    <div class="text-center max-w-3xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold">Fresh Dairy Gallery</h2>
+      <p class="mt-3 text-gray-600">
+        Explore premium dairy products from trusted marketplace sellers.
+      </p>
+    </div>
+
+    <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="rounded-3xl overflow-hidden border bg-white shadow-sm">
+        <img
+          src="https://img.freepik.com/free-photo/fresh-milk-mug-jug-wooden-table_114579-18233.jpg"
+          alt="Milk bottles"
+          class="w-full h-64 object-cover"
+        />
+        <div class="p-5">
+          <div class="text-lg font-semibold">Fresh Milk</div>
+          <div class="text-sm text-gray-600 mt-1">Pure and daily fresh milk.</div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border bg-white shadow-sm">
+        <img
+          src="https://img.freepik.com/premium-photo/ghee-clarified-butter-close-up-wooden-bowl-silver-spoon-selective-focus_926199-3023940.jpg?ga=GA1.1.2114206420.1767018846&semt=ais_hybrid&w=740&q=80"
+          alt="Ghee jar"
+          class="w-full h-64 object-cover"
+        />
+        <div class="p-5">
+          <div class="text-lg font-semibold">Pure Ghee</div>
+          <div class="text-sm text-gray-600 mt-1">Traditional rich ghee products.</div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border bg-white shadow-sm">
+        <img
+          src="https://img.freepik.com/free-photo/natural-white-cheese-black-plate_114579-23417.jpg?ga=GA1.1.2114206420.1767018846&semt=ais_hybrid&w=740&q=80"
+          alt="Paneer cubes"
+          class="w-full h-64 object-cover"
+        />
+        <div class="p-5">
+          <div class="text-lg font-semibold">Paneer</div>
+          <div class="text-sm text-gray-600 mt-1">Soft fresh paneer for daily meals.</div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border bg-white shadow-sm">
+        <img
+          src="https://img.freepik.com/premium-photo/bread-with-vegetable-oil-wooden-background_392895-129922.jpg?ga=GA1.1.2114206420.1767018846&semt=ais_hybrid&w=740&q=80"
+          alt="Butter"
+          class="w-full h-64 object-cover"
+        />
+        <div class="p-5">
+          <div class="text-lg font-semibold">Butter</div>
+          <div class="text-sm text-gray-600 mt-1">Creamy butter for breakfast and cooking.</div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border bg-white shadow-sm">
+        <img
+          src="https://img.freepik.com/premium-photo/gourmet-fresh-delicious-cheese-selection-adorned-with-pieces-slices_563241-2530.jpg?ga=GA1.1.2114206420.1767018846&semt=ais_hybrid&w=740&q=80"
+          alt="Cheese"
+          class="w-full h-64 object-cover"
+        />
+        <div class="p-5">
+          <div class="text-lg font-semibold">Cheese</div>
+          <div class="text-sm text-gray-600 mt-1">Fresh and premium cheese products.</div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border bg-white shadow-sm">
+        <img
+          src="https://img.freepik.com/premium-photo/plain-curd-yogurt-dahi-hindi-served-bowl-moody-background-selective-focus_466689-29340.jpg?ga=GA1.1.2114206420.1767018846&semt=ais_hybrid&w=740&q=80"
+          alt="Curd bowl"
+          class="w-full h-64 object-cover"
+        />
+        <div class="p-5">
+          <div class="text-lg font-semibold">Curd</div>
+          <div class="text-sm text-gray-600 mt-1">Fresh curd for daily health and taste.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="bg-gray-50 border-t">
+  <div class="max-w-7xl mx-auto px-4 py-14">
+    <div class="text-center max-w-3xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold">Shop by Dairy Categories</h2>
+      <p class="mt-3 text-gray-600">
+        Browse essential dairy products from trusted sellers across our marketplace.
+      </p>
+    </div>
+
+    <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="rounded-3xl overflow-hidden border bg-white shadow-sm">
+        <img
+          src="https://img.freepik.com/free-photo/glass-milk-bottle-fresh-milk_1150-17608.jpg"
+          alt="Milk"
+          class="w-full h-56 object-cover"
+        />
+        <div class="p-5">
+          <div class="text-xl font-semibold">Milk</div>
+          <div class="text-sm text-gray-600 mt-1">Daily fresh milk for homes and families.</div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border bg-white shadow-sm">
+        <img
+          src="https://img.freepik.com/premium-photo/ghee-clarified-butter-close-up-wooden-bowl-silver-spoon-selective-focus_466689-21168.jpg?ga=GA1.1.2114206420.1767018846&semt=ais_hybrid&w=740&q=80"
+          alt="Ghee"
+          class="w-full h-56 object-cover"
+        />
+        <div class="p-5">
+          <div class="text-xl font-semibold">Ghee</div>
+          <div class="text-sm text-gray-600 mt-1">Pure dairy ghee with traditional flavor.</div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border bg-white shadow-sm">
+        <img
+          src="https://img.freepik.com/free-photo/png-chopped-tofu-with-parsley-isolated-white-background_185193-163120.jpg"
+          alt="Paneer"
+          class="w-full h-56 object-cover"
+        />
+        <div class="p-5">
+          <div class="text-xl font-semibold">Paneer</div>
+          <div class="text-sm text-gray-600 mt-1">Soft paneer for fresh cooking needs.</div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border bg-white shadow-sm">
+        <img
+          src="https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?auto=format&fit=crop&w=900&q=80"
+          alt="Butter"
+          class="w-full h-56 object-cover"
+        />
+        <div class="p-5">
+          <div class="text-xl font-semibold">Butter</div>
+          <div class="text-sm text-gray-600 mt-1">Smooth and creamy butter products.</div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border bg-white shadow-sm">
+        <img
+          src="https://img.freepik.com/free-photo/front-view-delicious-fresh-cheese_23-2150166968.jpg"
+          alt="Cheese"
+          class="w-full h-56 object-cover"
+        />
+        <div class="p-5">
+          <div class="text-xl font-semibold">Cheese</div>
+          <div class="text-sm text-gray-600 mt-1">Premium cheese for every dairy lover.</div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border bg-white shadow-sm">
+        <img
+          src="https://img.freepik.com/premium-photo/plain-curd-yogurt-dahi-hindi-served-bowl-moody-background-selective-focus_466689-29279.jpg?ga=GA1.1.2114206420.1767018846&semt=ais_hybrid&w=740&q=80"
+          alt="Curd"
+          class="w-full h-56 object-cover"
+        />
+        <div class="p-5">
+          <div class="text-xl font-semibold">Curd</div>
+          <div class="text-sm text-gray-600 mt-1">Cool, healthy and fresh curd varieties.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DAIRY BRANDS / HIGHLIGHTS -->
+<section class="bg-white border-t">
+  <div class="max-w-7xl mx-auto px-4 py-14">
+    <div class="grid lg:grid-cols-2 gap-8 items-start">
+      <div>
+        <h2 class="text-3xl md:text-4xl font-bold">Popular Dairy Picks</h2>
+        <p class="mt-3 text-gray-600">
+          Discover favorite dairy essentials that customers usually buy every day.
+        </p>
+
+        <div class="mt-8 grid sm:grid-cols-2 gap-4">
+          <div class="rounded-3xl border bg-gray-50 p-5">
+            <div class="text-lg font-semibold">Fresh Cow Milk</div>
+            <div class="text-sm text-gray-600 mt-1">Daily household essential.</div>
+          </div>
+
+          <div class="rounded-3xl border bg-gray-50 p-5">
+            <div class="text-lg font-semibold">Buffalo Milk</div>
+            <div class="text-sm text-gray-600 mt-1">Rich and creamy milk choice.</div>
+          </div>
+
+          <div class="rounded-3xl border bg-gray-50 p-5">
+            <div class="text-lg font-semibold">Desi Ghee</div>
+            <div class="text-sm text-gray-600 mt-1">Pure aroma and rich taste.</div>
+          </div>
+
+          <div class="rounded-3xl border bg-gray-50 p-5">
+            <div class="text-lg font-semibold">Fresh Paneer Pack</div>
+            <div class="text-sm text-gray-600 mt-1">Perfect for curries and snacks.</div>
+          </div>
+
+          <div class="rounded-3xl border bg-gray-50 p-5">
+            <div class="text-lg font-semibold">Salted Butter</div>
+            <div class="text-sm text-gray-600 mt-1">Smooth and delicious spread.</div>
+          </div>
+
+          <div class="rounded-3xl border bg-gray-50 p-5">
+            <div class="text-lg font-semibold">Creamy Cheese</div>
+            <div class="text-sm text-gray-600 mt-1">Loved for sandwiches and snacks.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border bg-white p-6 shadow-sm">
+        <div class="text-sm text-gray-500">Why customers choose us</div>
+
+        <div class="mt-5 space-y-4">
+          <div class="rounded-2xl border p-4">
+            <div class="font-semibold">Trusted Sellers</div>
+            <div class="text-sm text-gray-600 mt-1">
+              Verified sellers offering quality dairy products.
+            </div>
+          </div>
+
+          <div class="rounded-2xl border p-4">
+            <div class="font-semibold">Easy Ordering</div>
+            <div class="text-sm text-gray-600 mt-1">
+              Smooth browsing, cart and checkout experience.
+            </div>
+          </div>
+
+          <div class="rounded-2xl border p-4">
+            <div class="font-semibold">Secure Payments</div>
+            <div class="text-sm text-gray-600 mt-1">
+              Safe payment flow with protected access.
+            </div>
+          </div>
+
+          <div class="rounded-2xl border p-4">
+            <div class="font-semibold">Fast Delivery</div>
+            <div class="text-sm text-gray-600 mt-1">
+              Fresh dairy orders delivered quickly and safely.
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <a
+            routerLink="/shop/products"
+            class="inline-flex px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90"
+          >
+            Start Shopping
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="bg-white border-t scroll-mt-24">
+  <div class="max-w-7xl mx-auto px-4 py-14">
+    <div class="grid lg:grid-cols-2 gap-10 items-center">
+      <div class="rounded-3xl overflow-hidden border shadow-sm">
+        <img
+          src="https://images.unsplash.com/photo-1517448931760-9bf4414148c5?auto=format&fit=crop&w=1200&q=80"
+          alt="About dairy marketplace"
+          class="w-full h-[360px] object-cover"
+        />
+      </div>
+
+      <div>
+        <h2 class="text-3xl md:text-4xl font-bold">About DairyGo</h2>
+        <p class="mt-4 text-gray-600 leading-7">
+          DairyGo is a modern multi-role dairy marketplace where users can browse,
+          order and track dairy products, sellers can manage products and orders, and admins
+          can monitor the whole platform smoothly.
+        </p>
+
+        <p class="mt-4 text-gray-600 leading-7">
+          Our goal is to make dairy shopping simple, fresh and reliable by connecting customers
+          with trusted dairy sellers through one secure platform.
+        </p>
+
+        <div class="mt-6 grid sm:grid-cols-2 gap-4">
+          <div class="rounded-2xl border bg-gray-50 p-4">
+            <div class="font-semibold">For Customers</div>
+            <div class="text-sm text-gray-600 mt-1">
+              Easy shopping, cart, checkout, orders and tracking.
+            </div>
+          </div>
+
+          <div class="rounded-2xl border bg-gray-50 p-4">
+            <div class="font-semibold">For Sellers</div>
+            <div class="text-sm text-gray-600 mt-1">
+              Product management, order handling and reports dashboard.
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a
+            routerLink="/shop/products"
+            class="px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90"
+          >
+            Explore Products
+          </a>
+
+          <a
+            *ngIf="auth.isLoggedIn()"
+            routerLink="/seller/apply"
+            class="px-5 py-3 rounded-2xl border hover:bg-gray-50"
+          >
+            Become Seller
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

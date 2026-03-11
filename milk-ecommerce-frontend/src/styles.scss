@@ -1,0 +1,12 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* stylelint-disable-next-line */
+@tailwind base;
+/* stylelint-disable-next-line */
+@tailwind components;
+/* stylelint-disable-next-line */
+@tailwind utilities;
+
+/* optional: smooth font */
+html, body { height: 100%; }
+body { margin: 0; }

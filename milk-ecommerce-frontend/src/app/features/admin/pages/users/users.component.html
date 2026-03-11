@@ -1,0 +1,107 @@
+<section class="max-w-7xl mx-auto px-4 py-10">
+  <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+    <div class="xl:col-span-3">
+      <app-admin-sidebar></app-admin-sidebar>
+    </div>
+
+    <div class="xl:col-span-9">
+      <div class="flex flex-col md:flex-row md:items-end gap-4 justify-between">
+        <div>
+          <h2 class="text-3xl font-bold">Users Management</h2>
+          <p class="text-gray-600 mt-1">View all users and control access.</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input
+            class="w-full md:w-72 px-4 py-3 rounded-2xl border focus:outline-none"
+            placeholder="Search by name, email, role..."
+            [(ngModel)]="q"
+            (input)="applyFilter()"
+          />
+
+          <select
+            [(ngModel)]="statusFilter"
+            (change)="applyFilter()"
+            class="w-full md:w-48 px-4 py-3 rounded-2xl border bg-white focus:outline-none"
+          >
+            <option value="ALL">All Status</option>
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="BLOCKED">BLOCKED</option>
+            <option value="INACTIVE">INACTIVE</option>
+          </select>
+
+          <button
+            type="button"
+            class="px-4 py-2 rounded-2xl border hover:bg-gray-50 disabled:opacity-50"
+            (click)="load()"
+            [disabled]="loading || actionLoadingId !== null"
+          >
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="err" class="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+        {{ err }}
+      </div>
+
+      <div *ngIf="success" class="mt-6 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">
+        {{ success }}
+      </div>
+
+      <div *ngIf="loading" class="py-12 text-center text-gray-600">Loading users...</div>
+
+      <div *ngIf="!loading && !err && filtered.length === 0" class="mt-6 rounded-2xl border bg-white p-6 text-gray-600">
+        No users found.
+      </div>
+
+      <div *ngIf="!loading && !err && filtered.length > 0" class="mt-6 rounded-3xl border bg-white overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-gray-50 text-left text-gray-600">
+              <tr>
+                <th class="px-5 py-3">Name</th>
+                <th class="px-5 py-3">Email</th>
+                <th class="px-5 py-3">Role</th>
+                <th class="px-5 py-3">Status</th>
+                <th class="px-5 py-3">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let u of filtered" class="border-t">
+                <td class="px-5 py-4 font-semibold">{{ u?.name || '-' }}</td>
+                <td class="px-5 py-4">{{ u?.email || '-' }}</td>
+                <td class="px-5 py-4">{{ roleText(u?.role) }}</td>
+                <td class="px-5 py-4">
+                  <span class="px-3 py-1 rounded-full border text-xs font-medium" [ngClass]="badgeClass(u?.status)">
+                    {{ u?.status || 'ACTIVE' }}
+                  </span>
+                </td>
+                <td class="px-5 py-4">
+                  <button
+                    *ngIf="(u?.status || '').toUpperCase() !== 'BLOCKED'"
+                    class="px-4 py-2 rounded-2xl bg-red-600 text-white hover:opacity-90 disabled:opacity-50"
+                    (click)="block(u?.id)"
+                    [disabled]="actionLoadingId === u?.id"
+                  >
+                    {{ actionLoadingId === u?.id ? 'Blocking...' : 'Block' }}
+                  </button>
+
+                  <button
+                    *ngIf="(u?.status || '').toUpperCase() === 'BLOCKED'"
+                    class="px-4 py-2 rounded-2xl bg-black text-white hover:opacity-90 disabled:opacity-50"
+                    (click)="unblock(u?.id)"
+                    [disabled]="actionLoadingId === u?.id"
+                  >
+                    {{ actionLoadingId === u?.id ? 'Unblocking...' : 'Unblock' }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

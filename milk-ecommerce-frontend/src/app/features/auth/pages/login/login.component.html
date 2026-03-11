@@ -1,0 +1,130 @@
+<section class="max-w-md mx-auto px-4 py-12">
+  <div class="rounded-3xl border bg-white p-6">
+    <h2 class="text-2xl font-bold">Login</h2>
+    <p class="text-gray-600 mt-1">Welcome back.</p>
+
+    <div *ngIf="err" class="mt-4 p-3 rounded-2xl border bg-red-50 text-red-700">
+      {{ err }}
+    </div>
+
+    <div *ngIf="success" class="mt-4 p-3 rounded-2xl border bg-green-50 text-green-700">
+      {{ success }}
+    </div>
+
+    <div *ngIf="!showForgotPassword" class="mt-6 grid gap-4">
+      <div>
+        <label class="text-sm text-gray-600">Email</label>
+        <input
+          [(ngModel)]="form.email"
+          type="email"
+          class="mt-2 w-full px-4 py-3 rounded-2xl border"
+          placeholder="Enter your email"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div>
+        <label class="text-sm text-gray-600">Password</label>
+        <div class="mt-2 relative">
+          <input
+            [(ngModel)]="form.password"
+            [type]="showPassword ? 'text' : 'password'"
+            class="w-full px-4 py-3 rounded-2xl border pr-16"
+            placeholder="Enter your password"
+            [disabled]="loading"
+          />
+          <button
+            type="button"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-600"
+            (click)="showPassword = !showPassword"
+            [disabled]="loading"
+          >
+            {{ showPassword ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="mt-2 px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90 disabled:opacity-50"
+        (click)="submit()"
+        [disabled]="loading"
+      >
+        {{ loading ? 'Logging in...' : 'Login' }}
+      </button>
+
+      <button
+        type="button"
+        class="text-sm text-blue-600 hover:underline text-left"
+        (click)="toggleForgotPassword()"
+        [disabled]="loading"
+      >
+        Forgot Password?
+      </button>
+    </div>
+
+    <div *ngIf="showForgotPassword" class="mt-6 grid gap-4">
+      <div>
+        <label class="text-sm text-gray-600">Email</label>
+        <input
+          [(ngModel)]="forgot.email"
+          type="email"
+          class="mt-2 w-full px-4 py-3 rounded-2xl border"
+          placeholder="Enter registered email"
+          [disabled]="resetting || otpSent"
+        />
+      </div>
+
+      <button
+        *ngIf="!otpSent"
+        type="button"
+        class="px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90 disabled:opacity-50"
+        (click)="sendOtp()"
+        [disabled]="resetting"
+      >
+        {{ resetting ? 'Sending OTP...' : 'Send OTP' }}
+      </button>
+
+      <ng-container *ngIf="otpSent">
+        <div>
+          <label class="text-sm text-gray-600">OTP</label>
+          <input
+            [(ngModel)]="forgot.otp"
+            class="mt-2 w-full px-4 py-3 rounded-2xl border"
+            placeholder="Enter OTP"
+            [disabled]="resetting"
+          />
+        </div>
+
+        <div>
+          <label class="text-sm text-gray-600">New Password</label>
+          <input
+            [(ngModel)]="forgot.newPassword"
+            type="password"
+            class="mt-2 w-full px-4 py-3 rounded-2xl border"
+            placeholder="Enter new password"
+            [disabled]="resetting"
+          />
+        </div>
+
+        <button
+          type="button"
+          class="px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90 disabled:opacity-50"
+          (click)="resetPassword()"
+          [disabled]="resetting"
+        >
+          {{ resetting ? 'Resetting...' : 'Reset Password' }}
+        </button>
+      </ng-container>
+
+      <button
+        type="button"
+        class="px-5 py-3 rounded-2xl border hover:bg-gray-50 disabled:opacity-50"
+        (click)="toggleForgotPassword()"
+        [disabled]="resetting"
+      >
+        Back to Login
+      </button>
+    </div>
+  </div>
+</section>

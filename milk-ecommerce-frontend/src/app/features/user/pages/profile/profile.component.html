@@ -1,0 +1,132 @@
+<div class="max-w-5xl mx-auto px-4 py-8">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold">My Profile</h1>
+    <p class="text-gray-600 mt-1">View and update your account details.</p>
+  </div>
+
+  <div *ngIf="loading" class="rounded-2xl border bg-white p-6 text-gray-600">
+    Loading profile...
+  </div>
+
+  <div *ngIf="!loading" class="grid md:grid-cols-2 gap-6">
+    <!-- Profile details -->
+    <div class="rounded-3xl border bg-white p-6">
+      <h2 class="text-xl font-semibold mb-4">Profile Information</h2>
+
+      <div *ngIf="error" class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+        {{ error }}
+      </div>
+
+      <div *ngIf="success" class="mb-4 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">
+        {{ success }}
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Name</label>
+          <input
+            [(ngModel)]="profileForm.name"
+            class="w-full px-4 py-3 rounded-2xl border focus:outline-none"
+            type="text"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <input
+            [value]="user?.email || ''"
+            class="w-full px-4 py-3 rounded-2xl border bg-gray-50"
+            type="text"
+            readonly
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Phone</label>
+          <input
+            [(ngModel)]="profileForm.phone"
+            class="w-full px-4 py-3 rounded-2xl border focus:outline-none"
+            type="text"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Address</label>
+          <textarea
+            [(ngModel)]="profileForm.address"
+            class="w-full px-4 py-3 rounded-2xl border focus:outline-none"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Role</label>
+          <input
+            [value]="user?.role?.roleName || ''"
+            class="w-full px-4 py-3 rounded-2xl border bg-gray-50"
+            type="text"
+            readonly
+          />
+        </div>
+
+        <button
+          (click)="saveProfile()"
+          [disabled]="saving"
+          class="px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90 disabled:opacity-50"
+        >
+          {{ saving ? 'Saving...' : 'Save Profile' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Change password -->
+    <div class="rounded-3xl border bg-white p-6">
+      <h2 class="text-xl font-semibold mb-4">Change Password</h2>
+
+      <div *ngIf="passwordError" class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+        {{ passwordError }}
+      </div>
+
+      <div *ngIf="passwordSuccess" class="mb-4 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">
+        {{ passwordSuccess }}
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Current Password</label>
+          <input
+            [(ngModel)]="passwordForm.currentPassword"
+            class="w-full px-4 py-3 rounded-2xl border focus:outline-none"
+            type="password"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">New Password</label>
+          <input
+            [(ngModel)]="passwordForm.newPassword"
+            class="w-full px-4 py-3 rounded-2xl border focus:outline-none"
+            type="password"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Confirm Password</label>
+          <input
+            [(ngModel)]="passwordForm.confirmPassword"
+            class="w-full px-4 py-3 rounded-2xl border focus:outline-none"
+            type="password"
+          />
+        </div>
+
+        <button
+          (click)="changePassword()"
+          [disabled]="passwordSaving"
+          class="px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90 disabled:opacity-50"
+        >
+          {{ passwordSaving ? 'Changing...' : 'Change Password' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

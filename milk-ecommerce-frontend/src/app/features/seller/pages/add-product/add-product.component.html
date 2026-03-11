@@ -1,0 +1,173 @@
+<section class="max-w-7xl mx-auto px-4 py-10">
+  <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+    <div class="xl:col-span-3">
+      <app-seller-sidebar></app-seller-sidebar>
+    </div>
+
+    <div class="xl:col-span-9">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <div>
+          <h2 class="text-3xl font-bold">{{ isEditMode ? 'Edit Product' : 'Add Product' }}</h2>
+          <p class="text-gray-600 mt-1">Create or update your product listing safely.</p>
+        </div>
+
+        <button
+          type="button"
+          class="px-4 py-2 rounded-2xl border hover:bg-gray-50 disabled:opacity-50"
+          (click)="goBack()"
+          [disabled]="submitting"
+        >
+          Back to Products
+        </button>
+      </div>
+
+      <div *ngIf="error" class="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+        {{ error }}
+      </div>
+
+      <div *ngIf="success" class="mt-6 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">
+        {{ success }}
+      </div>
+
+      <div *ngIf="loading" class="py-12 text-center text-gray-600">Loading product...</div>
+
+      <div *ngIf="!loading" class="mt-6 grid lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 rounded-3xl border bg-white p-6 shadow-sm">
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+              <label class="block text-sm font-semibold text-gray-700">Product Name</label>
+              <input
+                [(ngModel)]="form.name"
+                class="mt-2 w-full px-4 py-3 rounded-2xl border"
+                placeholder="Enter product name"
+                [disabled]="submitting"
+              />
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-sm font-semibold text-gray-700">Description</label>
+              <textarea
+                [(ngModel)]="form.description"
+                class="mt-2 w-full px-4 py-3 rounded-2xl border"
+                rows="4"
+                placeholder="Write product description"
+                [disabled]="submitting"
+              ></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-gray-700">Price</label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                [(ngModel)]="form.price"
+                class="mt-2 w-full px-4 py-3 rounded-2xl border"
+                placeholder="0.00"
+                [disabled]="submitting"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-gray-700">Stock</label>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                [(ngModel)]="form.stock"
+                class="mt-2 w-full px-4 py-3 rounded-2xl border"
+                placeholder="0"
+                [disabled]="submitting"
+              />
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-sm font-semibold text-gray-700">Category</label>
+              <select
+                [(ngModel)]="form.categoryId"
+                class="mt-2 w-full px-4 py-3 rounded-2xl border bg-white"
+                [disabled]="submitting"
+              >
+                <option [ngValue]="null">Select category</option>
+                <option *ngFor="let c of categories" [ngValue]="c?.id">
+                  {{ c?.categoryName }}
+                </option>
+              </select>
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-sm font-semibold text-gray-700">Image URL</label>
+              <input
+                [(ngModel)]="form.imageUrl"
+                class="mt-2 w-full px-4 py-3 rounded-2xl border"
+                placeholder="https://example.com/image.jpg"
+                [disabled]="submitting"
+              />
+            </div>
+
+            <div *ngIf="isEditMode" class="md:col-span-2">
+              <label class="block text-sm font-semibold text-gray-700">Status</label>
+              <select
+                [(ngModel)]="form.status"
+                class="mt-2 w-full px-4 py-3 rounded-2xl border bg-white"
+                [disabled]="submitting"
+              >
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="INACTIVE">INACTIVE</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-6 flex flex-wrap gap-3">
+            <button
+              type="button"
+              class="px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90 disabled:opacity-50"
+              (click)="submit()"
+              [disabled]="submitting || loading"
+            >
+              {{ submitting ? 'Saving...' : (isEditMode ? 'Update Product' : 'Add Product') }}
+            </button>
+
+            <button
+              type="button"
+              class="px-5 py-3 rounded-2xl border hover:bg-gray-50 disabled:opacity-50"
+              (click)="goBack()"
+              [disabled]="submitting"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+
+        <div class="rounded-3xl border bg-white p-6 shadow-sm h-fit">
+          <div class="text-lg font-semibold">Preview</div>
+
+          <img
+            [src]="previewImage()"
+            alt="Product preview"
+            class="mt-4 w-full h-56 object-cover rounded-2xl border"
+          />
+
+          <div class="mt-4">
+            <div class="font-semibold text-lg">{{ form.name || 'Product Name' }}</div>
+            <div class="text-sm text-gray-600 mt-1">
+              {{ form.description || 'Product description preview will appear here.' }}
+            </div>
+          </div>
+
+          <div class="mt-4 grid grid-cols-2 gap-3">
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Price</div>
+              <div class="font-bold">₹ {{ form.price || 0 }}</div>
+            </div>
+
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Stock</div>
+              <div class="font-semibold">{{ form.stock || 0 }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

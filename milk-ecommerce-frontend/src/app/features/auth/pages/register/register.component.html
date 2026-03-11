@@ -1,0 +1,106 @@
+<section class="max-w-md mx-auto px-4 py-12">
+  <div class="rounded-3xl border bg-white p-6">
+    <h2 class="text-2xl font-bold">Register</h2>
+    <p class="text-gray-600 mt-1">Create your account.</p>
+
+    <div *ngIf="msg" class="mt-4 p-3 rounded-2xl border bg-green-50 text-green-700">
+      {{ msg }}
+    </div>
+
+    <div *ngIf="err" class="mt-4 p-3 rounded-2xl border bg-red-50 text-red-700">
+      {{ err }}
+    </div>
+
+    <div class="mt-6 grid gap-4">
+      <div>
+        <input
+          class="w-full px-4 py-3 rounded-2xl border"
+          placeholder="Name"
+          [(ngModel)]="form.name"
+          (blur)="touched.name = true"
+          [class.border-red-400]="touched.name && nameError"
+        />
+        <div *ngIf="touched.name && nameError" class="mt-1 text-sm text-red-600">
+          {{ nameError }}
+        </div>
+      </div>
+
+      <div>
+        <input
+          class="w-full px-4 py-3 rounded-2xl border"
+          placeholder="Email"
+          [(ngModel)]="form.email"
+          (blur)="touched.email = true"
+          [class.border-red-400]="touched.email && emailError"
+        />
+        <div *ngIf="touched.email && emailError" class="mt-1 text-sm text-red-600">
+          {{ emailError }}
+        </div>
+      </div>
+
+      <div>
+        <div class="relative">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            class="w-full px-4 py-3 pr-14 rounded-2xl border"
+            placeholder="Password"
+            [(ngModel)]="form.password"
+            (blur)="touched.password = true"
+            [class.border-red-400]="touched.password && passwordError"
+          />
+
+          <button
+            type="button"
+            (click)="togglePassword()"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-600 hover:text-black"
+          >
+            {{ showPassword ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+
+        <div *ngIf="touched.password && passwordError" class="mt-1 text-sm text-red-600">
+          {{ passwordError }}
+        </div>
+      </div>
+
+      <div>
+        <input
+          class="w-full px-4 py-3 rounded-2xl border"
+          placeholder="Phone"
+          [(ngModel)]="form.phone"
+          (input)="sanitizePhoneInput()"
+          (keypress)="allowOnlyNumbers($event)"
+          (blur)="touched.phone = true"
+          [class.border-red-400]="touched.phone && phoneError"
+          maxlength="10"
+          inputmode="numeric"
+        />
+        <div *ngIf="touched.phone && phoneError" class="mt-1 text-sm text-red-600">
+          {{ phoneError }}
+        </div>
+      </div>
+
+      <div>
+        <textarea
+          class="w-full px-4 py-3 rounded-2xl border"
+          placeholder="Address"
+          rows="2"
+          [(ngModel)]="form.address"
+          (blur)="touched.address = true"
+          [class.border-red-400]="touched.address && addressError"
+        ></textarea>
+        <div *ngIf="touched.address && addressError" class="mt-1 text-sm text-red-600">
+          {{ addressError }}
+        </div>
+      </div>
+
+      <button
+        class="px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90 disabled:opacity-50"
+        [disabled]="loading || !isFormValid"
+        (click)="submit()"
+      >
+        {{ loading ? 'Creating...' : 'Register' }}
+      </button>
+    </div>
+  </div>
+</section>

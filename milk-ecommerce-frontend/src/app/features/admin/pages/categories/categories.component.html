@@ -1,0 +1,163 @@
+<section class="max-w-7xl mx-auto px-4 py-10">
+  <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+    <div class="xl:col-span-3">
+      <app-admin-sidebar></app-admin-sidebar>
+    </div>
+
+    <div class="xl:col-span-9">
+      <div class="grid lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-1">
+          <div class="rounded-3xl border bg-white p-6">
+            <h2 class="text-2xl font-bold">
+              {{ editingId ? 'Edit Category' : 'Add Category' }}
+            </h2>
+            <p class="text-gray-600 mt-1">Manage product categories from admin panel.</p>
+
+            <div *ngIf="err" class="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+              {{ err }}
+            </div>
+
+            <div *ngIf="success" class="mt-4 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">
+              {{ success }}
+            </div>
+
+            <div class="mt-5 space-y-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Category Name</label>
+                <input
+                  [(ngModel)]="form.categoryName"
+                  class="w-full px-4 py-3 rounded-2xl border focus:outline-none"
+                  type="text"
+                  placeholder="Enter category name"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium mb-1">Status</label>
+                <select
+                  [(ngModel)]="form.status"
+                  class="w-full px-4 py-3 rounded-2xl border focus:outline-none bg-white"
+                >
+                  <option value="ACTIVE">ACTIVE</option>
+                  <option value="INACTIVE">INACTIVE</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium mb-1">Description</label>
+                <textarea
+                  [(ngModel)]="form.description"
+                  class="w-full px-4 py-3 rounded-2xl border focus:outline-none"
+                  rows="4"
+                  placeholder="Optional description"
+                ></textarea>
+              </div>
+
+              <div class="flex gap-2">
+                <button
+                  (click)="save()"
+                  [disabled]="saving"
+                  class="px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90 disabled:opacity-50"
+                >
+                  {{ saving ? 'Saving...' : (editingId ? 'Update Category' : 'Add Category') }}
+                </button>
+
+                <button
+                  *ngIf="editingId"
+                  (click)="resetForm()"
+                  type="button"
+                  class="px-5 py-3 rounded-2xl border hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-2">
+          <div class="rounded-3xl border bg-white p-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-3">
+              <div>
+                <h2 class="text-2xl font-bold">Categories</h2>
+                <p class="text-gray-600 mt-1">View all categories and manage them.</p>
+              </div>
+
+              <div class="flex flex-col sm:flex-row gap-3">
+                <input
+                  [(ngModel)]="q"
+                  (input)="applyFilters()"
+                  type="text"
+                  placeholder="Search by category or description..."
+                  class="w-full sm:w-72 px-4 py-3 rounded-2xl border focus:outline-none"
+                />
+
+                <select
+                  [(ngModel)]="statusFilter"
+                  (change)="applyFilters()"
+                  class="w-full sm:w-48 px-4 py-3 rounded-2xl border bg-white focus:outline-none"
+                >
+                  <option value="ALL">All Status</option>
+                  <option value="ACTIVE">ACTIVE</option>
+                  <option value="INACTIVE">INACTIVE</option>
+                </select>
+
+                <button
+                  type="button"
+                  class="px-4 py-2 rounded-2xl border hover:bg-gray-50 disabled:opacity-50"
+                  (click)="load()"
+                  [disabled]="loading || saving || deletingId !== null"
+                >
+                  Refresh
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="loading" class="py-10 text-center text-gray-600">
+              Loading categories...
+            </div>
+
+            <div *ngIf="!loading && filtered.length === 0" class="py-10 text-center text-gray-600">
+              No categories found.
+            </div>
+
+            <div *ngIf="!loading && filtered.length > 0" class="mt-6 grid gap-4">
+              <div *ngFor="let c of filtered" class="rounded-3xl border p-5">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div>
+                    <div class="font-semibold text-lg">{{ c?.categoryName }}</div>
+                    <div class="text-sm text-gray-600 mt-1">{{ c?.description || 'No description' }}</div>
+                  </div>
+
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="px-3 py-1 rounded-full border text-sm" [ngClass]="badgeClass(c?.status)">
+                      {{ c?.status || 'ACTIVE' }}
+                    </span>
+
+                    <button
+                      type="button"
+                      class="px-4 py-2 rounded-2xl border hover:bg-gray-50"
+                      (click)="edit(c)"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      type="button"
+                      class="px-4 py-2 rounded-2xl bg-red-600 text-white hover:opacity-90 disabled:opacity-50"
+                      (click)="remove(c?.id)"
+                      [disabled]="deletingId === c?.id"
+                    >
+                      {{ deletingId === c?.id ? 'Deleting...' : 'Delete' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

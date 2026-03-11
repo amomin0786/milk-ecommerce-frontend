@@ -1,0 +1,125 @@
+<section class="max-w-7xl mx-auto px-4 py-10">
+  <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+    <div class="xl:col-span-3">
+      <app-admin-sidebar></app-admin-sidebar>
+    </div>
+
+    <div class="xl:col-span-9">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+        <div>
+          <h2 class="text-3xl font-bold">All Sellers</h2>
+          <p class="text-gray-600 mt-1">View all seller records and approval status.</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input
+            [(ngModel)]="q"
+            (input)="applyFilter()"
+            type="text"
+            placeholder="Search by name, email, shop, GST..."
+            class="w-full sm:w-80 px-4 py-3 rounded-2xl border focus:outline-none"
+          />
+
+          <select
+            [(ngModel)]="statusFilter"
+            (change)="applyFilter()"
+            class="w-full sm:w-52 px-4 py-3 rounded-2xl border bg-white focus:outline-none"
+          >
+            <option value="ALL">All Status</option>
+            <option value="APPROVED">APPROVED</option>
+            <option value="PENDING">PENDING</option>
+            <option value="REJECTED">REJECTED</option>
+          </select>
+
+          <button
+            type="button"
+            class="px-4 py-2 rounded-2xl border hover:bg-gray-50 disabled:opacity-50"
+            (click)="loadSellers()"
+            [disabled]="loading"
+          >
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="err" class="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+        {{ err }}
+      </div>
+
+      <div *ngIf="success" class="mt-6 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">
+        {{ success }}
+      </div>
+
+      <div *ngIf="loading" class="py-12 text-center text-gray-600">Loading sellers...</div>
+
+      <div *ngIf="!loading && !err && filtered.length === 0" class="mt-6 rounded-2xl border bg-white p-6 text-gray-600">
+        No sellers found.
+      </div>
+
+      <div *ngIf="!loading && !err && filtered.length > 0" class="mt-6 grid gap-4">
+        <div *ngFor="let s of filtered" class="rounded-3xl border bg-white p-5 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <div class="font-semibold text-lg">
+                {{ s?.shopName || 'Seller Shop' }}
+              </div>
+              <div class="text-sm text-gray-600 mt-1">
+                Seller ID: #{{ s?.id }}
+              </div>
+            </div>
+
+            <div>
+              <span class="px-3 py-1 rounded-full border text-sm" [ngClass]="badgeClass(s?.approvalStatus)">
+                {{ s?.approvalStatus || '-' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="mt-4 grid sm:grid-cols-2 xl:grid-cols-4 gap-3">
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Name</div>
+              <div class="font-semibold">{{ s?.userName || '-' }}</div>
+            </div>
+
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Email</div>
+              <div class="font-semibold break-all">{{ s?.userEmail || '-' }}</div>
+            </div>
+
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Phone</div>
+              <div class="font-semibold">{{ s?.userPhone || '-' }}</div>
+            </div>
+
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">User Status</div>
+              <div class="font-semibold">{{ s?.userStatus || '-' }}</div>
+            </div>
+          </div>
+
+          <div class="mt-3 grid sm:grid-cols-2 xl:grid-cols-4 gap-3">
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">GST Number</div>
+              <div class="font-semibold">{{ s?.gstNumber || '-' }}</div>
+            </div>
+
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Address</div>
+              <div class="font-semibold">{{ s?.userAddress || '-' }}</div>
+            </div>
+
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Created At</div>
+              <div class="font-semibold">{{ formatDate(s?.createdAt) }}</div>
+            </div>
+
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Total Sales</div>
+              <div class="font-semibold">₹ {{ money(s?.totalSales) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

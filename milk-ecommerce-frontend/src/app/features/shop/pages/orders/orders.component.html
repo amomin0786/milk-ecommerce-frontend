@@ -1,0 +1,124 @@
+<div class="max-w-6xl mx-auto px-4 py-6">
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold text-gray-900">My Orders</h2>
+    <p class="text-gray-600 mt-1">View, track, and manage your orders.</p>
+  </div>
+
+  <div *ngIf="loading" class="rounded-2xl bg-white shadow p-6 text-center text-gray-600">
+    Loading orders...
+  </div>
+
+  <div *ngIf="!loading && error" class="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-red-700">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && success" class="mb-4 rounded-2xl border border-green-200 bg-green-50 p-4 text-green-700">
+    {{ success }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="grid gap-4">
+    <div *ngFor="let o of orders" class="rounded-3xl border bg-white p-5 shadow-sm">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <div class="font-semibold text-lg text-gray-900">
+            Order #{{ o.id }}
+          </div>
+
+          <div class="text-sm text-gray-600 mt-1">
+            Total: <b>₹{{ o.totalAmount }}</b>
+          </div>
+
+          <div class="text-sm text-gray-600">
+            Payment: {{ o.paymentMethod || 'COD' }}
+          </div>
+
+          <div class="text-sm text-gray-600">
+            Status:
+            <span class="px-3 py-1 rounded-full text-xs font-medium"
+                  [ngClass]="getStatusClass(o.orderStatus)">
+              {{ o.orderStatus }}
+            </span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <button
+            class="px-4 py-2 border rounded-xl text-gray-700 hover:bg-gray-50"
+            (click)="viewOrder(o.id)">
+            View
+          </button>
+
+          <button
+            class="px-4 py-2 border rounded-xl text-gray-700 hover:bg-gray-50"
+            (click)="trackOrder(o.id)">
+            Track Order
+          </button>
+
+          <button
+            *ngIf="o.orderStatus === 'PENDING'"
+            class="px-4 py-2 bg-red-600 text-white rounded-xl hover:opacity-90"
+            (click)="cancelOrder(o.id)">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="orders.length === 0" class="rounded-2xl bg-white shadow p-8 text-center text-gray-600">
+      No orders found.
+    </div>
+  </div>
+</div>
+
+<!-- Tracking Modal -->
+<div *ngIf="trackingOpen" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+  <div class="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-6 relative">
+    <button
+      class="absolute top-4 right-4 text-gray-500 hover:text-black"
+      (click)="closeTracking()">
+      ✕
+    </button>
+
+    <h3 class="text-2xl font-bold text-gray-900 mb-2">
+      Order Tracking
+    </h3>
+    <p class="text-gray-600 mb-6">
+      Order #{{ selectedOrderId }}
+    </p>
+
+    <div *ngIf="trackingLoading" class="text-gray-600">
+      Loading timeline...
+    </div>
+
+    <div *ngIf="!trackingLoading && trackingError" class="rounded-2xl border border-red-200 bg-red-50 p-4 text-red-700">
+      {{ trackingError }}
+    </div>
+
+    <div *ngIf="!trackingLoading && !trackingError" class="space-y-4">
+      <div *ngFor="let t of timeline" class="flex gap-4 items-start border-l-4 border-black pl-4 py-1">
+        <div class="min-w-[110px]">
+          <span class="px-3 py-1 rounded-full text-xs font-medium"
+                [ngClass]="getStatusClass(t.status)">
+            {{ t.status }}
+          </span>
+        </div>
+
+        <div>
+          <div class="font-medium text-gray-900">
+            {{ t.note || 'Status updated' }}
+          </div>
+          <div class="text-sm text-gray-500">
+            Updated by: {{ t.updatedByEmail || '-' }}
+          </div>
+          <div class="text-sm text-gray-500">
+            {{ t.createdAt || t.updatedAt }}
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="timeline.length === 0" class="text-gray-600">
+        No tracking updates found.
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,159 @@
+<section class="max-w-7xl mx-auto px-4 py-10">
+  <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+    <div class="xl:col-span-3">
+      <app-admin-sidebar></app-admin-sidebar>
+    </div>
+
+    <div class="xl:col-span-9">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <div>
+          <h2 class="text-3xl font-bold">Admin Dashboard</h2>
+          <p class="text-gray-600 mt-1">Overview of users, products, orders and revenue.</p>
+        </div>
+
+        <button
+          type="button"
+          class="px-4 py-2 rounded-2xl border hover:bg-gray-50 disabled:opacity-50"
+          (click)="load()"
+          [disabled]="loading"
+        >
+          Refresh
+        </button>
+      </div>
+
+      <div *ngIf="loading" class="py-12 text-center text-gray-600">Loading dashboard...</div>
+
+      <div *ngIf="!loading && err" class="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+        {{ err }}
+      </div>
+
+      <ng-container *ngIf="!loading && !err">
+        <div class="mt-6 grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div class="rounded-3xl border bg-white p-5 shadow-sm">
+            <div class="text-sm text-gray-500">Total Users</div>
+            <div class="text-3xl font-bold mt-2">{{ stats?.users }}</div>
+          </div>
+
+          <div class="rounded-3xl border bg-white p-5 shadow-sm">
+            <div class="text-sm text-gray-500">Total Sellers</div>
+            <div class="text-3xl font-bold mt-2">{{ stats?.sellers }}</div>
+          </div>
+
+          <div class="rounded-3xl border bg-white p-5 shadow-sm">
+            <div class="text-sm text-gray-500">Total Products</div>
+            <div class="text-3xl font-bold mt-2">{{ stats?.products }}</div>
+          </div>
+
+          <div class="rounded-3xl border bg-white p-5 shadow-sm">
+            <div class="text-sm text-gray-500">Total Orders</div>
+            <div class="text-3xl font-bold mt-2">{{ stats?.orders }}</div>
+          </div>
+        </div>
+
+        <div class="mt-6 grid lg:grid-cols-3 gap-4">
+          <div class="lg:col-span-2 rounded-3xl border p-6 shadow-sm" [ngClass]="cardTone('revenue')">
+            <div class="text-sm opacity-80">Total Revenue</div>
+            <div class="text-4xl font-bold mt-2">₹ {{ money(stats?.revenue) }}</div>
+            <p class="text-sm mt-3 opacity-80">
+              Overall marketplace revenue based on current completed order data.
+            </p>
+          </div>
+
+          <div class="rounded-3xl border bg-white p-6 shadow-sm">
+            <div class="text-sm text-gray-500">Marketplace Health</div>
+            <div class="text-lg font-semibold mt-3">{{ marketplaceHealth() }}</div>
+            <p class="text-sm text-gray-500 mt-2">
+              Based on current products, orders and cancellation trend.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-6 grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div class="rounded-3xl border p-5 shadow-sm" [ngClass]="cardTone('warning')">
+            <div class="text-sm text-gray-600">Pending Orders</div>
+            <div class="text-2xl font-bold mt-2">{{ stats?.pendingOrders }}</div>
+          </div>
+
+          <div class="rounded-3xl border p-5 shadow-sm" [ngClass]="cardTone('success')">
+            <div class="text-sm text-gray-600">Delivered Orders</div>
+            <div class="text-2xl font-bold mt-2">{{ stats?.deliveredOrders }}</div>
+          </div>
+
+          <div class="rounded-3xl border p-5 shadow-sm" [ngClass]="cardTone('warning')">
+            <div class="text-sm text-gray-600">Pending Sellers</div>
+            <div class="text-2xl font-bold mt-2">{{ stats?.pendingSellers || 0 }}</div>
+            <a routerLink="/admin/pending-sellers" class="inline-block mt-3 text-sm underline">
+              Review requests
+            </a>
+          </div>
+
+          <div class="rounded-3xl border p-5 shadow-sm" [ngClass]="cardTone('danger')">
+            <div class="text-sm text-gray-600">Low Stock Products</div>
+            <div class="text-2xl font-bold mt-2">{{ stats?.lowStockProducts || 0 }}</div>
+            <a routerLink="/admin/products" class="inline-block mt-3 text-sm underline">
+              View products
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-6 grid sm:grid-cols-2 xl:grid-cols-5 gap-4">
+          <div class="rounded-3xl border bg-white p-5 shadow-sm">
+            <div class="text-sm text-gray-500">Confirmed Orders</div>
+            <div class="text-2xl font-bold mt-2">{{ stats?.confirmedOrders }}</div>
+          </div>
+
+          <div class="rounded-3xl border bg-white p-5 shadow-sm">
+            <div class="text-sm text-gray-500">Shipped Orders</div>
+            <div class="text-2xl font-bold mt-2">{{ stats?.shippedOrders }}</div>
+          </div>
+
+          <div class="rounded-3xl border bg-white p-5 shadow-sm">
+            <div class="text-sm text-gray-500">Cancelled Orders</div>
+            <div class="text-2xl font-bold mt-2">{{ stats?.cancelledOrders }}</div>
+          </div>
+
+          <div class="rounded-3xl border bg-white p-5 shadow-sm">
+            <div class="text-sm text-gray-500">Total Sellers</div>
+            <div class="text-2xl font-bold mt-2">{{ stats?.sellers }}</div>
+          </div>
+
+          <div class="rounded-3xl border bg-white p-5 shadow-sm">
+            <div class="text-sm text-gray-500">Total Users</div>
+            <div class="text-2xl font-bold mt-2">{{ stats?.users }}</div>
+          </div>
+        </div>
+
+        <div class="mt-6 rounded-3xl border bg-white p-6 shadow-sm">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <h3 class="text-xl font-bold">Quick Actions</h3>
+              <p class="text-sm text-gray-500 mt-1">Open common admin sections quickly.</p>
+            </div>
+          </div>
+
+          <div class="mt-4 grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <a routerLink="/admin/orders" class="rounded-2xl border p-4 hover:bg-gray-50 transition block">
+              <div class="text-sm text-gray-500">Manage</div>
+              <div class="mt-1 font-semibold text-lg">Orders</div>
+            </a>
+
+            <a routerLink="/admin/products" class="rounded-2xl border p-4 hover:bg-gray-50 transition block">
+              <div class="text-sm text-gray-500">Manage</div>
+              <div class="mt-1 font-semibold text-lg">Products</div>
+            </a>
+
+            <a routerLink="/admin/sellers" class="rounded-2xl border p-4 hover:bg-gray-50 transition block">
+              <div class="text-sm text-gray-500">View</div>
+              <div class="mt-1 font-semibold text-lg">All Sellers</div>
+            </a>
+
+            <a routerLink="/admin/reports" class="rounded-2xl border p-4 hover:bg-gray-50 transition block">
+              <div class="text-sm text-gray-500">Open</div>
+              <div class="mt-1 font-semibold text-lg">Reports</div>
+            </a>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</section>

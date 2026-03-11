@@ -1,0 +1,267 @@
+<section class="max-w-7xl mx-auto px-4 py-10">
+  <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+    <div class="xl:col-span-3">
+      <app-seller-sidebar></app-seller-sidebar>
+    </div>
+
+    <div class="xl:col-span-9">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+        <div>
+          <h2 class="text-3xl font-bold">Seller Orders</h2>
+          <p class="text-gray-600 mt-1">Manage your orders and update their status safely.</p>
+        </div>
+
+        <div class="flex gap-2">
+          <button
+            type="button"
+            class="px-4 py-2 rounded-2xl border hover:bg-gray-50 disabled:opacity-50"
+            (click)="load()"
+            [disabled]="loading || saving || exporting"
+          >
+            Refresh
+          </button>
+
+          <button
+            type="button"
+            class="px-4 py-2 rounded-2xl bg-black text-white hover:opacity-90 disabled:opacity-50"
+            (click)="downloadCsv()"
+            [disabled]="loading || saving || exporting"
+          >
+            {{ exporting ? 'Downloading...' : 'Download CSV' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-6 grid md:grid-cols-2 xl:grid-cols-4 gap-3">
+        <input
+          [(ngModel)]="q"
+          (input)="applyFilters()"
+          type="text"
+          placeholder="Search by order id, user name, email, payment..."
+          class="w-full px-4 py-3 rounded-2xl border focus:outline-none"
+        />
+
+        <select
+          [(ngModel)]="statusFilter"
+          (change)="applyFilters()"
+          class="w-full px-4 py-3 rounded-2xl border bg-white focus:outline-none"
+        >
+          <option value="ALL">All Status</option>
+          <option value="PENDING">PENDING</option>
+          <option value="CONFIRMED">CONFIRMED</option>
+          <option value="SHIPPED">SHIPPED</option>
+          <option value="DELIVERED">DELIVERED</option>
+          <option value="CANCELLED">CANCELLED</option>
+        </select>
+
+        <input
+          [(ngModel)]="fromDate"
+          (change)="applyFilters()"
+          type="date"
+          class="w-full px-4 py-3 rounded-2xl border bg-white focus:outline-none"
+        />
+
+        <input
+          [(ngModel)]="toDate"
+          (change)="applyFilters()"
+          type="date"
+          class="w-full px-4 py-3 rounded-2xl border bg-white focus:outline-none"
+        />
+      </div>
+
+      <div class="mt-2 text-sm text-gray-500">
+        Date range for filter and CSV: {{ fromDate || '-' }} to {{ toDate || '-' }}
+      </div>
+
+      <div *ngIf="err" class="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+        {{ err }}
+      </div>
+
+      <div *ngIf="success" class="mt-6 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">
+        {{ success }}
+      </div>
+
+      <div *ngIf="loading" class="py-12 text-center text-gray-600">Loading seller orders...</div>
+
+      <div *ngIf="!loading && !err && filtered.length === 0" class="mt-6 rounded-2xl border bg-white p-6 text-gray-600">
+        No orders found.
+      </div>
+
+      <div *ngIf="!loading && !err && filtered.length > 0" class="mt-6 grid gap-4">
+        <div *ngFor="let o of filtered" class="rounded-3xl border bg-white p-5 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <div class="font-semibold text-lg">Order #{{ o?.id }}</div>
+              <div class="mt-1 text-sm text-gray-600">{{ formatDate(o?.orderDate) }}</div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 rounded-full border text-sm" [ngClass]="badgeClass(o?.orderStatus)">
+                {{ o?.orderStatus }}
+              </span>
+
+              <button
+                type="button"
+                class="px-4 py-2 rounded-2xl bg-black text-white hover:opacity-90"
+                (click)="open(o)"
+              >
+                View / Update
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-4 grid sm:grid-cols-4 gap-3">
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Total</div>
+              <div class="font-bold">₹ {{ money(o?.totalAmount) }}</div>
+            </div>
+
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Payment</div>
+              <div class="font-semibold">{{ o?.paymentMethod || '-' }}</div>
+            </div>
+
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Customer</div>
+              <div class="font-semibold break-all">{{ o?.customerName || o?.user?.name || '-' }}</div>
+            </div>
+
+            <div class="rounded-2xl bg-gray-50 p-4">
+              <div class="text-xs text-gray-500">Phone</div>
+              <div class="font-semibold">{{ o?.customerPhone || '-' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="selected" class="fixed inset-0 z-50">
+        <div class="absolute inset-0 bg-black/50" (click)="close()"></div>
+
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+          <div class="w-full max-w-5xl rounded-3xl border bg-white shadow-xl overflow-hidden">
+            <div class="px-6 py-4 border-b flex items-center justify-between">
+              <div>
+                <div class="font-semibold text-lg">Order #{{ selected?.id }}</div>
+                <div class="text-sm text-gray-600 mt-1">{{ formatDate(selected?.orderDate) }}</div>
+              </div>
+              <button class="px-3 py-2 rounded-2xl border hover:bg-gray-50 disabled:opacity-50" (click)="close()" [disabled]="saving">✕</button>
+            </div>
+
+            <div class="p-6">
+              <div class="grid md:grid-cols-4 gap-3">
+                <div class="rounded-2xl bg-gray-50 p-4">
+                  <div class="text-xs text-gray-500">Current Status</div>
+                  <div class="mt-2 inline-block px-3 py-1 rounded-full border text-sm" [ngClass]="badgeClass(selected?.orderStatus)">
+                    {{ selected?.orderStatus }}
+                  </div>
+                </div>
+
+                <div class="rounded-2xl bg-gray-50 p-4">
+                  <div class="text-xs text-gray-500">Payment</div>
+                  <div class="font-semibold mt-2">{{ selected?.paymentMethod || '-' }}</div>
+                </div>
+
+                <div class="rounded-2xl bg-gray-50 p-4">
+                  <div class="text-xs text-gray-500">Total</div>
+                  <div class="font-semibold mt-2">₹ {{ money(selected?.totalAmount) }}</div>
+                </div>
+
+                <div class="rounded-2xl bg-gray-50 p-4">
+                  <div class="text-xs text-gray-500">Refund</div>
+                  <div class="font-semibold mt-2">{{ selected?.refundStatus || 'NONE' }}</div>
+                </div>
+              </div>
+
+              <div class="mt-6 grid md:grid-cols-2 gap-4">
+                <div class="rounded-2xl bg-gray-50 p-4">
+                  <div class="text-xs text-gray-500">Customer Name</div>
+                  <div class="font-semibold mt-2">{{ selected?.customerName || selected?.user?.name || '-' }}</div>
+                </div>
+
+                <div class="rounded-2xl bg-gray-50 p-4">
+                  <div class="text-xs text-gray-500">Customer Email</div>
+                  <div class="font-semibold mt-2 break-all">{{ selected?.customerEmail || selected?.user?.email || '-' }}</div>
+                </div>
+
+                <div class="rounded-2xl bg-gray-50 p-4">
+                  <div class="text-xs text-gray-500">Phone</div>
+                  <div class="font-semibold mt-2">{{ selected?.customerPhone || '-' }}</div>
+                </div>
+
+                <div class="rounded-2xl bg-gray-50 p-4 md:col-span-2">
+                  <div class="text-xs text-gray-500">Delivery Address</div>
+                  <div class="font-semibold mt-2 whitespace-pre-line">{{ selected?.shippingAddress || '-' }}</div>
+                </div>
+              </div>
+
+              <div class="mt-6">
+                <div class="text-sm font-semibold text-gray-700">Update Status</div>
+                <select
+                  class="mt-2 w-full px-4 py-3 rounded-2xl border"
+                  [(ngModel)]="newStatus"
+                  [disabled]="saving"
+                >
+                  <option value="PENDING">PENDING</option>
+                  <option value="CONFIRMED">CONFIRMED</option>
+                  <option value="SHIPPED">SHIPPED</option>
+                  <option value="DELIVERED">DELIVERED</option>
+                  <option value="CANCELLED">CANCELLED</option>
+                </select>
+              </div>
+
+              <div class="mt-6 rounded-3xl border overflow-hidden">
+                <div class="px-5 py-3 bg-gray-50 font-semibold">Order Items</div>
+
+                <div *ngIf="itemsLoading" class="p-5 text-gray-600">Loading items...</div>
+
+                <div *ngIf="!itemsLoading && itemsError" class="p-5 text-red-600">
+                  {{ itemsError }}
+                </div>
+
+                <div *ngIf="!itemsLoading && !itemsError" class="overflow-x-auto">
+                  <table class="min-w-full text-sm">
+                    <thead class="text-left text-gray-600">
+                      <tr class="border-b">
+                        <th class="px-5 py-3">Product</th>
+                        <th class="px-5 py-3">Price</th>
+                        <th class="px-5 py-3">Qty</th>
+                        <th class="px-5 py-3">Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let it of selectedItems" class="border-b last:border-b-0">
+                        <td class="px-5 py-3">
+                          <div class="font-semibold">{{ it?.productName || '-' }}</div>
+                        </td>
+                        <td class="px-5 py-3">₹ {{ money(it?.price) }}</td>
+                        <td class="px-5 py-3">{{ it?.quantity }}</td>
+                        <td class="px-5 py-3 font-semibold">₹ {{ subtotal(it) }}</td>
+                      </tr>
+
+                      <tr *ngIf="selectedItems.length === 0">
+                        <td colspan="4" class="px-5 py-10 text-center text-gray-500">
+                          No items found.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="mt-6 flex justify-end gap-2">
+                <button class="px-5 py-3 rounded-2xl border hover:bg-gray-50 disabled:opacity-50" (click)="close()" [disabled]="saving">
+                  Close
+                </button>
+
+                <button class="px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90 disabled:opacity-50" (click)="saveStatus()" [disabled]="saving">
+                  {{ saving ? 'Saving...' : 'Save Status' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

@@ -1,0 +1,154 @@
+<section class="max-w-7xl mx-auto px-4 py-10">
+  <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+    <div class="xl:col-span-3">
+      <app-seller-sidebar></app-seller-sidebar>
+    </div>
+
+    <div class="xl:col-span-9">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+        <div>
+          <h2 class="text-3xl font-bold tracking-tight">Seller Reports</h2>
+          <p class="text-gray-600 mt-1">
+            Generate your revenue and order reports with a clean date-range view.
+          </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">From</label>
+            <input
+              type="date"
+              [(ngModel)]="form.from"
+              class="px-4 py-3 rounded-2xl border bg-white focus:outline-none w-full"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">To</label>
+            <input
+              type="date"
+              [(ngModel)]="form.to"
+              class="px-4 py-3 rounded-2xl border bg-white focus:outline-none w-full"
+            />
+          </div>
+
+          <div class="flex items-end gap-3">
+            <button
+              (click)="load()"
+              [disabled]="loading || exporting || isInvalidRange()"
+              class="px-6 py-3 rounded-2xl bg-black text-white hover:opacity-90 disabled:opacity-50 w-full sm:w-auto"
+            >
+              {{ loading ? 'Generating...' : 'Generate Report' }}
+            </button>
+
+            <button
+              (click)="downloadCsv()"
+              [disabled]="loading || exporting || isInvalidRange()"
+              class="px-6 py-3 rounded-2xl border hover:bg-gray-50 disabled:opacity-50 w-full sm:w-auto"
+            >
+              {{ exporting ? 'Downloading...' : 'Download CSV' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="err" class="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+        {{ err }}
+      </div>
+
+      <div *ngIf="loading" class="mt-6 rounded-3xl border bg-white p-10 text-center text-gray-600">
+        Generating report...
+      </div>
+
+      <div *ngIf="!loading && !err" class="mt-6 grid sm:grid-cols-2 xl:grid-cols-5 gap-4">
+        <div class="rounded-3xl border p-5 shadow-sm" [ngClass]="cardClass('revenue')">
+          <div class="text-sm opacity-80">Total Revenue</div>
+          <div class="text-3xl font-bold mt-2">₹ {{ money(report?.revenue) }}</div>
+          <div class="text-xs mt-2 opacity-70">Selected date range revenue</div>
+        </div>
+
+        <div class="rounded-3xl border p-5 shadow-sm" [ngClass]="cardClass('delivered')">
+          <div class="text-sm text-gray-600">Delivered Orders</div>
+          <div class="text-3xl font-bold mt-2">{{ report?.deliveredCount || 0 }}</div>
+          <div class="text-xs mt-2 text-gray-500">Successfully completed</div>
+        </div>
+
+        <div class="rounded-3xl border p-5 shadow-sm" [ngClass]="cardClass('pending')">
+          <div class="text-sm text-gray-600">Pending Orders</div>
+          <div class="text-3xl font-bold mt-2">{{ report?.pendingCount || 0 }}</div>
+          <div class="text-xs mt-2 text-gray-500">Waiting for processing</div>
+        </div>
+
+        <div class="rounded-3xl border p-5 shadow-sm" [ngClass]="cardClass('shipped')">
+          <div class="text-sm text-gray-600">Shipped Orders</div>
+          <div class="text-3xl font-bold mt-2">{{ report?.shippedCount || 0 }}</div>
+          <div class="text-xs mt-2 text-gray-500">Already dispatched</div>
+        </div>
+
+        <div class="rounded-3xl border p-5 shadow-sm" [ngClass]="cardClass('cancelled')">
+          <div class="text-sm text-gray-600">Cancelled Orders</div>
+          <div class="text-3xl font-bold mt-2">{{ report?.cancelledCount || 0 }}</div>
+          <div class="text-xs mt-2 text-gray-500">Cancelled in range</div>
+        </div>
+      </div>
+
+      <div *ngIf="!loading && !err" class="mt-6 rounded-3xl border bg-white p-6 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h3 class="text-xl font-semibold">Report Summary</h3>
+            <p class="text-sm text-gray-600 mt-1">
+              Showing report from <b>{{ form.from }}</b> to <b>{{ form.to }}</b>
+            </p>
+          </div>
+
+          <div class="text-sm text-gray-600">
+            Delivered orders loaded: <b>{{ report?.orders?.length || 0 }}</b>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!loading && !err" class="mt-6 rounded-3xl border bg-white overflow-hidden shadow-sm">
+        <div class="px-5 py-4 border-b bg-gray-50">
+          <div class="font-semibold text-lg">Delivered Orders List</div>
+          <div class="text-sm text-gray-600 mt-1">
+            Revenue table for the selected range
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-white text-left text-gray-600">
+              <tr class="border-b">
+                <th class="px-5 py-3">Order ID</th>
+                <th class="px-5 py-3">Order Date</th>
+                <th class="px-5 py-3">Total Amount</th>
+                <th class="px-5 py-3">Status</th>
+                <th class="px-5 py-3">Payment Method</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let o of report?.orders" class="border-b last:border-b-0 hover:bg-gray-50">
+                <td class="px-5 py-4 font-semibold">#{{ o?.id }}</td>
+                <td class="px-5 py-4">{{ formatDate(o?.orderDate) }}</td>
+                <td class="px-5 py-4 font-semibold">₹ {{ money(o?.totalAmount) }}</td>
+                <td class="px-5 py-4">
+                  <span class="px-3 py-1 rounded-full border text-xs bg-green-50 text-green-700 border-green-200">
+                    {{ o?.orderStatus }}
+                  </span>
+                </td>
+                <td class="px-5 py-4">{{ o?.paymentMethod || 'COD' }}</td>
+              </tr>
+
+              <tr *ngIf="!report?.orders || report?.orders.length === 0">
+                <td colspan="5" class="px-5 py-12 text-center text-gray-500">
+                  No delivered orders found for this date range.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

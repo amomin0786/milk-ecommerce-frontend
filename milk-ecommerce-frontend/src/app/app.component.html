@@ -1,0 +1,10 @@
+<ng-container *ngIf="!isPanelRoute(); else panelLayout">
+  <app-header></app-header>
+  <router-outlet></router-outlet>
+  <app-footer></app-footer>
+</ng-container>
+
+<ng-template #panelLayout>
+  <app-header></app-header>
+  <router-outlet></router-outlet>
+</ng-template>

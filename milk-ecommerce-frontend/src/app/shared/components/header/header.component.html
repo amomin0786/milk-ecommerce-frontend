@@ -1,0 +1,182 @@
+<!-- PANEL HEADER: admin, seller, admin profile, seller profile -->
+<header *ngIf="shouldUsePanelHeader; else fullHeader" class="w-full border-b bg-white sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+
+    <a [routerLink]="panelHomeLink" class="flex items-center gap-3 font-semibold text-lg">
+
+      <img
+        [src]="logoUrl"
+        alt="DairyGo Logo"
+        class="h-10 w-10 rounded-xl object-cover"
+      />
+
+      <span>DairyGo</span>
+    </a>
+
+    <div class="flex items-center gap-2">
+      <span class="hidden sm:inline text-sm text-gray-600">
+        {{ user?.name || user?.email }}
+      </span>
+
+      <a
+        routerLink="/user/profile"
+        class="px-3 py-2 rounded-xl border hover:bg-gray-50 text-sm"
+      >
+        Profile
+      </a>
+
+      <button
+        (click)="logout()"
+        class="px-3 py-2 rounded-xl bg-black text-white hover:opacity-90 text-sm"
+      >
+        Logout
+      </button>
+    </div>
+
+  </div>
+</header>
+
+
+<!-- FULL PUBLIC HEADER -->
+<ng-template #fullHeader>
+  <header class="w-full border-b bg-white sticky top-0 z-50">
+
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+
+      <a routerLink="/" class="flex items-center gap-3 font-semibold text-lg">
+
+        <img
+          [src]="logoUrl"
+          alt="DairyGo Logo"
+          class="h-10 w-10 rounded-xl object-cover border"
+        />
+
+        <span>DairyGo</span>
+
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6">
+        <a routerLink="/" class="text-gray-600 hover:text-black">Home</a>
+        <a [routerLink]="['/']" fragment="gallery" class="text-gray-600 hover:text-black">Gallery</a>
+        <a [routerLink]="['/']" fragment="about" class="text-gray-600 hover:text-black">About</a>
+        <a routerLink="/shop/products" class="text-gray-600 hover:text-black">Products</a>
+
+        <a
+          *ngIf="canShowCart"
+          routerLink="/shop/cart"
+          class="text-gray-600 hover:text-black"
+        >
+          Cart
+        </a>
+
+        <a
+          *ngIf="auth.isLoggedIn() && isUser"
+          routerLink="/user/my-orders"
+          class="text-gray-600 hover:text-black"
+        >
+          My Orders
+        </a>
+      </nav>
+
+      <div class="hidden md:flex items-center gap-2">
+
+        <ng-container *ngIf="!auth.isLoggedIn(); else loggedInDesktop">
+          <a routerLink="/login" class="px-3 py-2 rounded-xl border hover:bg-gray-50">
+            Login
+          </a>
+
+          <a routerLink="/register" class="px-3 py-2 rounded-xl bg-black text-white hover:opacity-90">
+            Register
+          </a>
+        </ng-container>
+
+        <ng-template #loggedInDesktop>
+
+          <span class="text-sm text-gray-600 mx-2">
+            {{ user?.name || user?.email }}
+          </span>
+
+          <a routerLink="/user/profile" class="px-3 py-2 rounded-xl border hover:bg-gray-50">
+            Profile
+          </a>
+
+          <button (click)="logout()" class="px-3 py-2 rounded-xl bg-black text-white hover:opacity-90">
+            Logout
+          </button>
+
+        </ng-template>
+
+      </div>
+
+      <button class="md:hidden px-3 py-2 rounded-xl border" (click)="toggle()" aria-label="Toggle menu">
+        ☰
+      </button>
+
+    </div>
+
+
+    <div *ngIf="open" class="md:hidden border-t bg-white">
+
+      <div class="px-4 py-3 flex flex-col gap-3">
+
+        <a (click)="close()" routerLink="/" class="text-gray-700">Home</a>
+        <a (click)="close()" [routerLink]="['/']" fragment="gallery" class="text-gray-700">Gallery</a>
+        <a (click)="close()" [routerLink]="['/']" fragment="about" class="text-gray-700">About</a>
+        <a (click)="close()" routerLink="/shop/products" class="text-gray-700">Products</a>
+
+        <a
+          *ngIf="canShowCart"
+          (click)="close()"
+          routerLink="/shop/cart"
+          class="text-gray-700"
+        >
+          Cart
+        </a>
+
+        <a
+          *ngIf="auth.isLoggedIn() && isUser"
+          (click)="close()"
+          routerLink="/user/my-orders"
+          class="text-gray-700"
+        >
+          My Orders
+        </a>
+
+        <div class="pt-2 flex gap-2" *ngIf="!auth.isLoggedIn(); else loggedInMobile">
+
+          <a (click)="close()" routerLink="/login" class="flex-1 text-center px-3 py-2 rounded-xl border">
+            Login
+          </a>
+
+          <a (click)="close()" routerLink="/register" class="flex-1 text-center px-3 py-2 rounded-xl bg-black text-white">
+            Register
+          </a>
+
+        </div>
+
+        <ng-template #loggedInMobile>
+
+          <div class="pt-2 text-sm text-gray-600">
+            {{ user?.name || user?.email }} ({{ roleLabel }})
+          </div>
+
+          <a
+            (click)="close()"
+            routerLink="/user/profile"
+            class="w-full text-center px-3 py-2 rounded-xl border hover:bg-gray-50"
+          >
+            Profile
+          </a>
+
+          <button (click)="logout()" class="mt-2 w-full px-3 py-2 rounded-xl bg-black text-white hover:opacity-90">
+            Logout
+          </button>
+
+        </ng-template>
+
+      </div>
+
+    </div>
+
+  </header>
+</ng-template>

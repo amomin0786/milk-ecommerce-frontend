@@ -1,0 +1,23 @@
+<section class="max-w-3xl mx-auto px-4 py-14">
+  <div class="rounded-3xl border bg-white p-8 text-center">
+    <div class="text-4xl">✅</div>
+    <h2 class="mt-4 text-3xl font-bold">Order Successful</h2>
+
+    <p class="mt-2 text-gray-600">
+      Your order has been placed successfully.
+    </p>
+
+    <div *ngIf="orderId" class="mt-4 text-gray-700">
+      Order ID: <b>#{{ orderId }}</b>
+    </div>
+
+    <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+      <button class="px-5 py-3 rounded-2xl bg-black text-white" (click)="goOrders()">
+        View My Orders
+      </button>
+      <button class="px-5 py-3 rounded-2xl border" (click)="goShop()">
+        Continue Shopping
+      </button>
+    </div>
+  </div>
+</section>
