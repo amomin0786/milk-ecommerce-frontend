@@ -1,5 +1,4 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'http://localhost:8080'
-  
+  apiUrl: 'https://milk-ecommerce-backend-production.up.railway.app'
 };
